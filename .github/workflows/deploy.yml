@@ -1,0 +1,44 @@
+name: Deploy de Aplicação Web em Produção
+
+# Quando este pipeline será executado
+on:
+  push:
+    branches:
+      - main # Aciona apenas quando há push na branch 'main'
+
+# Os "trabalhos" (jobs) que serão executados
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest # O Agente de execução será uma máquina virtual Ubuntu
+
+    steps:
+      # 1. Checa o código do repositório (Source)
+      - name: Checkout do Código
+        uses: actions/checkout@v4
+
+      # 2. Configura o ambiente de Node.js
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # 3. Executa o Build (Construção) e os Testes (CI)
+      - name: Instalar Dependências, Testar e Fazer Build
+        run: |
+          npm install
+          npm test 
+          npm run build # Cria o artefato na pasta 'dist/'
+
+      # 4. Implantação Segura (Deploy - CD)
+      - name: Deploy via SSH e rsync
+        uses: easingthemes/ssh-deploy@main
+        env:
+          # Carrega as variáveis SECRETAS configuradas no Passo 4.2
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          USERNAME: ${{ secrets.DEPLOY_USER }}
+          # Pasta local do artefato (saída do 'npm run build')
+          SOURCE: "dist/"
+          # Pasta de destino no servidor remoto (servidor de deploy)
+          TARGET: "/var/www/minha-app-web/"
+          ARGS: "-avz --delete" # Argumentos de sincronização
