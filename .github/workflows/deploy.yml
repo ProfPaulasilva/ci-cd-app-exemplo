@@ -1,3 +1,4 @@
+# Nome do nosso Pipeline
 name: Deploy de Aplicação Web em Produção
 
 # Quando este pipeline será executado
@@ -32,13 +33,19 @@ jobs:
       # 4. Implantação Segura (Deploy - CD)
       - name: Deploy via SSH e rsync
         uses: easingthemes/ssh-deploy@main
-        env:
-          # Carrega as variáveis SECRETAS configuradas no Passo 4.2
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
-          HOST: ${{ secrets.DEPLOY_HOST }}
-          USERNAME: ${{ secrets.DEPLOY_USER }}
-          # Pasta local do artefato (saída do 'npm run build')
-          SOURCE: "dist/"
-          # Pasta de destino no servidor remoto (servidor de deploy)
-          TARGET: "/var/www/minha-app-web/"
-          ARGS: "-avz --delete" # Argumentos de sincronização
+        # CORREÇÃO: Usamos 'with:' para passar inputs à Action, lendo os Secrets
+        with:
+          sshPrivateKey: ${{ secrets.SSH_KEY }}
+          remoteHost: ${{ secrets.DEPLOY_HOST }}
+          remoteUser: ${{ secrets.DEPLOY_USER }}
+          # Pastas e argumentos
+          source: "dist/"
+          target: "/var/www/minha-app-web/"
+          args: "-avz --delete"
+
+
+### 4.4. Teste e Execução (CI/CD em Ação)
+
+###1.  **Envio do Pipeline Corrigido:*
+  
+    
