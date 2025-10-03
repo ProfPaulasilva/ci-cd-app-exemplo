@@ -1,0 +1,1 @@
+console.log("Aplicação em execução! Versão 1.0");

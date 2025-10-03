@@ -1,0 +1,15 @@
+{
+  "name": "ci-cd-app-exemplo",
+  "version": "1.0.0",
+  "description": "Exemplo de app para pipeline CI/CD",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js", 
+    "build": "echo 'Simulando a criação do artefato (dist/)...' && mkdir -p dist && cp index.js dist/",
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
+
